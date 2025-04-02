@@ -1,0 +1,44 @@
+
+services:
+
+
+  user-service:
+    build: ../Back - usuarios y profesores
+    container_name: user-service
+    ports:
+      - "8081:8081"
+    networks:
+      - user-network
+    depends_on:
+      - mysql-db
+
+
+  mysql-db:
+    image: mysql:8.0
+    container_name: users_db-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: users_db
+      MYSQL_USER: root
+      MYSQL_PASSWORD: mysql
+    ports:
+      - "3307:3306"
+    expose:
+      - "3307"
+    volumes:
+      - mysql-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p$$MYSQL_ROOT_PASSWORD"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - user-network
+
+
+volumes:
+  mysql-data:
+
+networks:
+  user-network:
+    driver: bridge
