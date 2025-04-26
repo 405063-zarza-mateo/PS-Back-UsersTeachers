@@ -3,6 +3,7 @@ package org.utn.tup.ps.Models;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.utn.tup.ps.Dto.Student.ReviewDto;
 import org.utn.tup.ps.Enum.Course;
 
 import java.util.List;
@@ -15,5 +16,5 @@ public class Student {
     private String lastName;
     private String address;
     private Course course;
-    private List<Review> results;
+    private List<ReviewDto> results;
 }

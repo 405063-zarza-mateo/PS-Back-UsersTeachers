@@ -15,5 +15,4 @@ public class Teacher {
     private Course course;
     private Integer assistance;
 
-//TODO: ANADIR ASISTENCIAS
 }

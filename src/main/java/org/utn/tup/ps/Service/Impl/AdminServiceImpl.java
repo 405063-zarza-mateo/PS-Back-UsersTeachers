@@ -13,12 +13,10 @@ import java.util.List;
 public class AdminServiceImpl implements AdminService {
     private final TeacherRepository teacherRepository;
 
-    // Obtener todos los profesores pendientes de aprobación
-    public List<TeacherEntity> getPendingTeachers() {
-        return teacherRepository.findByApproved(false);
+    public List<TeacherEntity> getPendingTeachers(Boolean approved) {
+        return teacherRepository.findByApproved(approved);
     }
 
-    // Aprobar un profesor
     public TeacherEntity approveTeacher(Long teacherId) {
         TeacherEntity teacher = teacherRepository.findById(teacherId)
                 .orElseThrow(() -> new RuntimeException("Profesor no encontrado"));
@@ -27,7 +25,6 @@ public class AdminServiceImpl implements AdminService {
         return teacherRepository.save(teacher);
     }
 
-    // Rechazar un profesor
     public void rejectTeacher(Long teacherId) {
         teacherRepository.deleteById(teacherId);
     }

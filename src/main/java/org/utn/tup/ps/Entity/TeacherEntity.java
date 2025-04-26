@@ -12,7 +12,7 @@ import org.utn.tup.ps.Enum.Course;
 @Data
 public class TeacherEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String name;

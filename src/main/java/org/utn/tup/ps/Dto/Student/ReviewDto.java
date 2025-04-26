@@ -1,11 +1,20 @@
 package org.utn.tup.ps.Dto.Student;
 
-import org.utn.tup.ps.Enum.Subject;
-import org.utn.tup.ps.Models.Result;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.utn.tup.ps.Models.Teacher;
 
+import java.time.LocalDate;
 import java.util.List;
 
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+
 public class ReviewDto {
-    List<Result> results;
-    Double score;
+    List<ResultDto> resultDtos;
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    LocalDate date;
 }

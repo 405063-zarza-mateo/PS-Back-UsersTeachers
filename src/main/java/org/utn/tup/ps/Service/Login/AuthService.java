@@ -70,6 +70,7 @@ public class AuthService {
 
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
 
+
         return new JwtResponseDto(
                 jwt,
                 "Bearer",

@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface AdminService {
 
-    List<TeacherEntity> getPendingTeachers();
+    List<TeacherEntity> getPendingTeachers(Boolean approved);
 
     TeacherEntity approveTeacher(Long teacherId);
 

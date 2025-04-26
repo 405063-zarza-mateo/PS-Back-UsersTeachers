@@ -1,4 +1,4 @@
-package org.utn.tup.ps.Models;
+package org.utn.tup.ps.Dto.Student;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -9,7 +9,7 @@ import org.utn.tup.ps.Enum.Subject;
 @AllArgsConstructor
 @NoArgsConstructor
 
-public class Result {
+public class ResultDto {
     private Subject subject;
     private Double score;
     private Boolean workedOn;

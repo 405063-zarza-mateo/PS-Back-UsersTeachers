@@ -12,12 +12,11 @@ import org.utn.tup.ps.Enum.UserRole;
 @Data
 public class UserEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String email;
 
-    //TODO: ARREGLAR
     private String password;
 
     private String role;

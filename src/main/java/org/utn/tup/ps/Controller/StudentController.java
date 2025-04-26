@@ -1,52 +1,62 @@
 package org.utn.tup.ps.Controller;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.utn.tup.ps.Dto.Student.StudentPostDto;
-import org.utn.tup.ps.Dto.Teacher.TeacherPostDto;
 import org.utn.tup.ps.Entity.StudentEntity;
-import org.utn.tup.ps.Entity.TeacherEntity;
-import org.utn.tup.ps.Models.Student;
+import org.utn.tup.ps.Enum.Course;
+import org.utn.tup.ps.Dto.Student.ReviewDto;
 import org.utn.tup.ps.Service.StudentService;
-import org.utn.tup.ps.Service.TeacherService;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/student")
 @RequiredArgsConstructor
+@SecurityRequirement(name = "bearerAuth")
+
 public class StudentController {
     private final StudentService service;
 
     @PostMapping("/create")
-    public ResponseEntity<StudentPostDto> createTeacher(StudentPostDto postDto){
-        return new ResponseEntity<>(service.addStudent(postDto), HttpStatus.CREATED);
+    public ResponseEntity<StudentPostDto> createStudent(@RequestBody StudentPostDto postDto, @RequestParam String teacherEmail) {
+        return new ResponseEntity<>(service.addStudent(postDto, teacherEmail), HttpStatus.CREATED);
+    }
+
+    @PostMapping("/addReview")
+    public ResponseEntity<ReviewDto> createStudent(@RequestParam Long studentId, @RequestParam String teacherEmail, @RequestBody ReviewDto reviewDto) {
+        return new ResponseEntity<>(service.addReview(studentId, teacherEmail, reviewDto), HttpStatus.CREATED);
     }
 
     @GetMapping("/all")
     public ResponseEntity<List<StudentEntity>> getStudents(){
-        //TODO: AGREGAR CAPACIDAD DE FILTRADO
         return new ResponseEntity<>(service.getStudents(), HttpStatus.OK);
     }
 
 
 
-    @GetMapping
-    public ResponseEntity<StudentEntity> getStudentById(Long id){
-        return new ResponseEntity<>(service.getStudentById(id), HttpStatus.FOUND);
+    @GetMapping("/{id}")
+    public ResponseEntity<StudentEntity> getStudentById(@PathVariable Long id) {
+        return new ResponseEntity<>(service.getStudentById(id), HttpStatus.OK);
     }
 
-    @PutMapping
-    public ResponseEntity<StudentEntity> updateStudent(StudentEntity entity){
-        return new ResponseEntity<>(service.updateStudent(entity), HttpStatus.OK);
-
+    @PutMapping("/{id}")
+    public ResponseEntity<StudentEntity> updateStudent(@PathVariable Long id, @RequestBody StudentEntity entity, @RequestParam  String teacherEmail) {
+        entity.setId(id);
+        return new ResponseEntity<>(service.updateStudent(entity, teacherEmail), HttpStatus.OK);
     }
 
-    @DeleteMapping
-    public ResponseEntity<?> deleteStudent(Long id){
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteStudent(@PathVariable Long id) {
         service.deleteStudent(id);
         return new ResponseEntity<>("Deleted student.", HttpStatus.OK);
+    }
+
+    @GetMapping("/courses")
+    public ResponseEntity<List<Course>> getCourses(){
+        return  new ResponseEntity<>(service.getCourses(), HttpStatus.OK);
     }
 }

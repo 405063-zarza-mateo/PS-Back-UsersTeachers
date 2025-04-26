@@ -17,12 +17,12 @@ import java.util.List;
 public class ReviewEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToMany
+    @OneToMany (cascade = CascadeType.ALL)
     private List<ResultEntity> results;
-    @ManyToOne
+    @ManyToOne (cascade = {CascadeType.MERGE, CascadeType.PERSIST} )
     private TeacherEntity teacher;
     //TODO: REVISAR EN CASO DE ERROR
     @JsonFormat(pattern = "yyyy-MM-dd", timezone = "UTC-3")

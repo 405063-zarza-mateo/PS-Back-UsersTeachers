@@ -13,7 +13,7 @@ import org.utn.tup.ps.Enum.Subject;
 public class ResultEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Enumerated(EnumType.STRING)

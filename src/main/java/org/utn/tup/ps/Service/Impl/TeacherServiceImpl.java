@@ -5,7 +5,9 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.utn.tup.ps.Dto.Teacher.TeacherAdminDto;
 import org.utn.tup.ps.Dto.Teacher.TeacherPostDto;
+import org.utn.tup.ps.Entity.AuditEntity;
 import org.utn.tup.ps.Entity.TeacherEntity;
+import org.utn.tup.ps.Repository.AuditRepository;
 import org.utn.tup.ps.Repository.StudentRepository;
 import org.utn.tup.ps.Repository.TeacherRepository;
 import org.utn.tup.ps.Repository.UserRepository;
@@ -52,4 +54,6 @@ public class TeacherServiceImpl implements TeacherService {
         else
             throw new RuntimeException("Teacher not found");
     }
+
+
 }
