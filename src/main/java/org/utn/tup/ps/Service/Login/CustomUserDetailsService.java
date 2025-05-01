@@ -28,7 +28,6 @@ public class CustomUserDetailsService implements UserDetailsService {
         UserEntity user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado con el email: " + email));
 
-        // Si es un profesor, verificar si está aprobado
         if ("ROLE_TEACHER".equals(user.getRole())) {
             Optional<TeacherEntity> teacher = teacherRepository.findByUserId(user.getId());
             if (teacher.isPresent() && !teacher.get().isApproved()) {

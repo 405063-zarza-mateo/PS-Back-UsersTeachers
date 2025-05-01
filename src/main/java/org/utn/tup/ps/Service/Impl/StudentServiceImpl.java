@@ -63,6 +63,7 @@ public class StudentServiceImpl implements StudentService {
             log.logUpdate(entity.getName() + " " + entity.getLastName(), teacher.getName() + " " + teacher.getLastName());
         }
 
+
         return studentRepository.save(entity);
     }
 

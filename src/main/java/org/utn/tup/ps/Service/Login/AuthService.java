@@ -35,18 +35,15 @@ public class AuthService {
     private final JwtUtil jwtUtil;
 
     public SignupResponseDto registerTeacher(TeacherPostDto teacherDto) {
-        // Verificar si el email ya existe
         if (userRepository.existsByEmail(teacherDto.getEmail())) {
             throw new RuntimeException("El email ya está en uso");
         }
 
-        // Crear entidad de usuario
         UserEntity user = new UserEntity();
         user.setEmail(teacherDto.getEmail());
         user.setPassword(passwordEncoder.encode(teacherDto.getPassword()));
         user.setRole("ROLE_TEACHER");
 
-        // Crear entidad de profesor
         TeacherEntity teacher = new TeacherEntity();
         teacher.setName(teacherDto.getName());
         teacher.setLastName(teacherDto.getLastName());
@@ -55,7 +52,6 @@ public class AuthService {
         teacher.setApproved(false);
         teacher.setUser(user);
 
-        // Guardar el profesor (y su usuario por cascada)
         teacherRepository.save(teacher);
 
         return new SignupResponseDto("Registro exitoso. Pendiente de aprobación por el administrador.");
@@ -77,5 +73,19 @@ public class AuthService {
                 userDetails.getUsername(),
                 userDetails.getAuthorities().iterator().next().getAuthority()
         );
+    }
+
+    public boolean changePassword(String email, String currentPassword, String newPassword) {
+        UserEntity user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        if (!passwordEncoder.matches(currentPassword, user.getPassword())) {
+            return false;
+        }
+
+        user.setPassword(passwordEncoder.encode(newPassword));
+        userRepository.save(user);
+
+        return true;
     }
 }
