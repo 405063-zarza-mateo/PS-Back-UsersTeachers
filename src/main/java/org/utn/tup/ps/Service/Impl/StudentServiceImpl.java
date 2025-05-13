@@ -11,6 +11,7 @@ import org.utn.tup.ps.Entity.StudentEntity;
 import org.utn.tup.ps.Entity.TeacherEntity;
 import org.utn.tup.ps.Enum.Course;
 import org.utn.tup.ps.Dto.Student.ReviewDto;
+import org.utn.tup.ps.Repository.ReviewRepository;
 import org.utn.tup.ps.Repository.StudentRepository;
 import org.utn.tup.ps.Repository.TeacherRepository;
 import org.utn.tup.ps.Repository.UserRepository;
@@ -31,6 +32,7 @@ public class StudentServiceImpl implements StudentService {
     private final UserRepository userRepository;
     private final ModelMapper modelMapper;
     private final AuditService log;
+    private final ReviewRepository reviewRepository;
 
     @Override
     public StudentPostDto addStudent(StudentPostDto dto, String teacherEmail) {
@@ -63,6 +65,12 @@ public class StudentServiceImpl implements StudentService {
             log.logUpdate(entity.getName() + " " + entity.getLastName(), teacher.getName() + " " + teacher.getLastName());
         }
 
+        StudentEntity oldStudent = studentRepository.findById(entity.getId()).get();
+
+        if (oldStudent.getReviews() != null)
+            entity.setReviews(oldStudent.getReviews());
+
+        entity.setAssistance(oldStudent.getAssistance());
 
         return studentRepository.save(entity);
     }
@@ -90,13 +98,18 @@ public class StudentServiceImpl implements StudentService {
                 reviews.get(reviews.size() - 1).getDate(), LocalDate.now())) {
             throw new RuntimeException("El estudiante ya fue reseñado hoy");
         }
+        for (ReviewEntity entity : reviewRepository.findAllByTeacher(teacher)) {
+            if (Objects.equals(entity.getDate(), LocalDate.now())) {
+                throw new RuntimeException("El profesor ya ha escrito una review hoy");
+            }
+        }
 
         for (int i = 0; i < reviewDto.getResultDtos().size(); i++) {
             ResultEntity resultEntity = new ResultEntity();
             resultEntity.setSubject(reviewDto.getResultDtos().get(i).getSubject());
 
             if (reviewDto.getResultDtos().get(i).getWorkedOn()) {
-            resultEntity.setScore(reviewDto.getResultDtos().get(i).getScore());
+                resultEntity.setScore(reviewDto.getResultDtos().get(i).getScore());
             }
 
             resultEntity.setWorkedOn(reviewDto.getResultDtos().get(i).getWorkedOn());
@@ -104,8 +117,11 @@ public class StudentServiceImpl implements StudentService {
             reviewEntity.getResults().add(resultEntity);
         }
 
+        if (studentEntity.getAssistance() == null)
+            studentEntity.setAssistance(1);
+        else
+            studentEntity.setAssistance(studentEntity.getAssistance() + 1);
 
-        studentEntity.setAssistance(studentEntity.getAssistance() + 1);
         teacher.setAssistance(teacher.getAssistance() + 1);
 
         reviewEntity.setDate(reviewDto.getDate());

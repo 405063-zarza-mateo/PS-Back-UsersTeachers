@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 import org.utn.tup.ps.Dto.Login.ProfileDto;
 import org.utn.tup.ps.Dto.Student.ResultDto;
 import org.utn.tup.ps.Dto.Teacher.TeacherAdminDto;
@@ -26,7 +27,6 @@ public class TeacherServiceImpl implements TeacherService {
     private final UserRepository userRepository;
     private final ReviewRepository reviewRepository;
     private final StudentRepository studentRepository;
-
 
     @Override
     public TeacherAdminDto createTeacherForAdminRole(TeacherAdminDto dto) {

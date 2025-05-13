@@ -67,7 +67,6 @@ public class TeacherController {
         return new ResponseEntity<>(profile, HttpStatus.OK);
     }
 
-    // NUEVO ENDPOINT - Actualizar curso del profesor autenticado
     @PutMapping("/profile")
     public ResponseEntity<ProfileDto> updateTeacherProfile(@RequestBody Map<String, String> updateData) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -75,5 +74,11 @@ public class TeacherController {
         Course course = Course.valueOf(updateData.get("curso"));
         ProfileDto updatedProfile = service.updateCourse(currentUserEmail, course);
         return new ResponseEntity<>(updatedProfile, HttpStatus.OK);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteTeacher(@PathVariable Long id){
+        service.deleteTeacher(id);
+        return new ResponseEntity<>("Deleted teacher.", HttpStatus.OK);
     }
 }

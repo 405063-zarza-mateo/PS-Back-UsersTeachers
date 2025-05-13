@@ -9,13 +9,13 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 import org.utn.tup.ps.Dto.Login.JwtResponseDto;
 import org.utn.tup.ps.Dto.Login.LoginDto;
 import org.utn.tup.ps.Dto.Login.SignupResponseDto;
 import org.utn.tup.ps.Dto.Teacher.TeacherPostDto;
 import org.utn.tup.ps.Entity.TeacherEntity;
 import org.utn.tup.ps.Entity.UserEntity;
-import org.utn.tup.ps.Enum.UserRole;
 import org.utn.tup.ps.Repository.TeacherRepository;
 import org.utn.tup.ps.Repository.UserRepository;
 import org.utn.tup.ps.util.JwtUtil;
@@ -33,6 +33,8 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
 
     private final JwtUtil jwtUtil;
+
+    private final RestTemplate restTemplate;
 
     public SignupResponseDto registerTeacher(TeacherPostDto teacherDto) {
         if (userRepository.existsByEmail(teacherDto.getEmail())) {
@@ -53,6 +55,7 @@ public class AuthService {
         teacher.setUser(user);
 
         teacherRepository.save(teacher);
+
 
         return new SignupResponseDto("Registro exitoso. Pendiente de aprobación por el administrador.");
     }

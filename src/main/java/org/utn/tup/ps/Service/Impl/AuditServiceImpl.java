@@ -53,7 +53,7 @@ public class AuditServiceImpl implements AuditService {
     public AuditEntity logReview(String studentName, String teacherName) {
         AuditEntity entity = new AuditEntity();
         entity.setTime(LocalDateTime.now(ZoneId.of("America/Argentina/Buenos_Aires")));
-        entity.setMessage(teacherName + " ha creado una reseña para " + studentName);
+        entity.setMessage(teacherName + " ha escrito una reseña para " + studentName);
         log.info("LOG DE REVIEW EN PROCESO");
         return repository.save(entity);
     }

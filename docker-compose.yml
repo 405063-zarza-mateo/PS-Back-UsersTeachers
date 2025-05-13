@@ -42,4 +42,5 @@ volumes:
 
 networks:
   user-network:
-    driver: bridge
+    external: true
+    name: shared-network
