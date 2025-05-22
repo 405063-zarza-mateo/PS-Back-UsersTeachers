@@ -13,4 +13,5 @@ public interface TeacherRepository extends JpaRepository<TeacherEntity, Long> {
     List<TeacherEntity> findByApproved(boolean approved);
     Optional<TeacherEntity> findByUserId(Long id);
     Optional<TeacherEntity> findByUser(UserEntity user);
+    List<TeacherEntity> findByActiveTrue();
 }

@@ -1,6 +1,7 @@
 package org.utn.tup.ps.Service;
 
 import org.utn.tup.ps.Entity.AuditEntity;
+import org.utn.tup.ps.Entity.UserEntity;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -17,4 +18,5 @@ public interface AuditService {
     List<AuditEntity> getAuditLog();
 
     void cleanLogs();
+
 }

@@ -9,6 +9,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.utn.tup.ps.Entity.AuditEntity;
 import org.utn.tup.ps.Entity.TeacherEntity;
+import org.utn.tup.ps.Entity.UserEntity;
 import org.utn.tup.ps.Service.AdminService;
 import org.utn.tup.ps.Service.AuditService;
 
@@ -46,5 +47,10 @@ public class AdminController {
     @GetMapping("/logs")
     public ResponseEntity<List<AuditEntity>> getAuditLog(){
         return new ResponseEntity<>(auditService.getAuditLog(), HttpStatus.OK);
+    }
+
+    @GetMapping("/users")
+    public ResponseEntity<List<UserEntity>> getUsers(){
+        return new ResponseEntity<>(adminService.getUsers(), HttpStatus.OK);
     }
 }

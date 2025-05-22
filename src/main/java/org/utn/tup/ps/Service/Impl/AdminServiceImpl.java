@@ -30,11 +30,12 @@ public class AdminServiceImpl implements AdminService {
     @Value("${comms.service.url:http://news-service:8080/api/comms}")
     private String commsServiceUrl;
 
-
+    @Override
     public List<TeacherEntity> getPendingTeachers(Boolean approved) {
         return teacherRepository.findByApproved(approved);
     }
 
+    @Override
     public TeacherEntity approveTeacher(Long teacherId) {
 
         TeacherEntity teacher = teacherRepository.findById(teacherId)
@@ -59,6 +60,7 @@ public class AdminServiceImpl implements AdminService {
         return teacherRepository.save(teacher);
     }
 
+    @Override
     public void rejectTeacher(Long teacherId) {
 
         UserEntity user = userRepository.findById(teacherId)
@@ -76,5 +78,10 @@ public class AdminServiceImpl implements AdminService {
 
         teacherRepository.deleteById(teacherId);
 
+    }
+
+    @Override
+    public List<UserEntity> getUsers() {
+        return userRepository.findAll();
     }
 }

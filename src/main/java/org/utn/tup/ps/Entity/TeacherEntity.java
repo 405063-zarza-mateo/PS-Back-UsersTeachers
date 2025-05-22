@@ -30,4 +30,6 @@ public class TeacherEntity {
     private UserEntity user;
 
     private boolean approved = false;
+
+    private boolean active = true;
 }

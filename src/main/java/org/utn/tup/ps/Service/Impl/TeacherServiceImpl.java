@@ -12,6 +12,7 @@ import org.utn.tup.ps.Dto.Teacher.TeacherPostDto;
 import org.utn.tup.ps.Dto.Teacher.TeacherReviewDto;
 import org.utn.tup.ps.Entity.*;
 import org.utn.tup.ps.Enum.Course;
+import org.utn.tup.ps.Models.Teacher;
 import org.utn.tup.ps.Repository.*;
 import org.utn.tup.ps.Service.TeacherService;
 
@@ -39,7 +40,7 @@ public class TeacherServiceImpl implements TeacherService {
 
     @Override
     public List<TeacherEntity> getTeachers() {
-        return teacherRepository.findAll();
+        return teacherRepository.findByActiveTrue();
     }
 
     @Override
@@ -49,15 +50,19 @@ public class TeacherServiceImpl implements TeacherService {
 
     @Override
     public TeacherEntity updateTeacher(TeacherEntity entity) {
+        TeacherEntity old = teacherRepository.findById(entity.getId()).get();
+        if (old.getAssistance() != null)
+            entity.setAssistance(old.getAssistance());
         return teacherRepository.save(entity);
     }
 
     @Override
     public void deleteTeacher(Long id) {
-        if (teacherRepository.findById(id).isPresent())
-            teacherRepository.deleteById(id);
-        else
-            throw new RuntimeException("Teacher not found");
+        TeacherEntity teacher = teacherRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Teacher not found"));
+
+        teacher.setActive(false);
+        teacherRepository.save(teacher);
     }
 
     @Override
@@ -87,7 +92,7 @@ public class TeacherServiceImpl implements TeacherService {
     @Scheduled(cron = "@yearly")
     @Override
     public void passCourseAfterYear() {
-        List<TeacherEntity> teachers = teacherRepository.findAll();
+        List<TeacherEntity> teachers = teacherRepository.findByActiveTrue();
         Course[] courses = Course.values();
 
         for (TeacherEntity teacher : teachers) {

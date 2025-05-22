@@ -55,7 +55,7 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     public List<StudentEntity> getStudents() {
-        return studentRepository.findAll();
+        return studentRepository.findByActiveTrue();
     }
 
     @Override
@@ -77,12 +77,14 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     public void deleteStudent(Long id) {
-        if (studentRepository.findById(id).isPresent()) {
-            StudentEntity entity = studentRepository.findById(id).get();
-            log.logDelete(entity.getName() + " " + entity.getLastName());
-            studentRepository.deleteById(id);
-        } else
-            throw new RuntimeException("Student not found");
+        StudentEntity entity = studentRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Teacher not found or already inactive"));
+
+        log.logDelete(entity.getName() + " " + entity.getLastName());
+
+        entity.setActive(false);
+
+        studentRepository.save(entity);
     }
 
     @Override
@@ -99,7 +101,7 @@ public class StudentServiceImpl implements StudentService {
             throw new RuntimeException("El estudiante ya fue reseñado hoy");
         }
         for (ReviewEntity entity : reviewRepository.findAllByTeacher(teacher)) {
-            if (Objects.equals(entity.getDate(), LocalDate.now())) {
+            if (Objects.equals(entity.getDate(), LocalDate.now()) && !Objects.equals(entity.getTeacher().getUser().getEmail(), "elgalponcitoateneo@gmail.com")) {
                 throw new RuntimeException("El profesor ya ha escrito una review hoy");
             }
         }
@@ -145,7 +147,7 @@ public class StudentServiceImpl implements StudentService {
     @Scheduled(cron = "@yearly")
     @Override
     public void passCourseAfterYear() {
-        List<StudentEntity> students = studentRepository.findAll();
+        List<StudentEntity> students = studentRepository.findByActiveTrue();
         Course[] courses = Course.values();
 
         for (StudentEntity student : students) {

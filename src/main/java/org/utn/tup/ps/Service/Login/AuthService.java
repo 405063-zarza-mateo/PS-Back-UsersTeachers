@@ -2,6 +2,7 @@ package org.utn.tup.ps.Service.Login;
 
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.utn.tup.ps.Dto.Login.JwtResponseDto;
 import org.utn.tup.ps.Dto.Login.LoginDto;
+import org.utn.tup.ps.Dto.Login.SendEmailDto;
 import org.utn.tup.ps.Dto.Login.SignupResponseDto;
 import org.utn.tup.ps.Dto.Teacher.TeacherPostDto;
 import org.utn.tup.ps.Entity.TeacherEntity;
@@ -35,6 +37,9 @@ public class AuthService {
     private final JwtUtil jwtUtil;
 
     private final RestTemplate restTemplate;
+
+    @Value("${comms.service.url:http://news-service:8080/api/comms}")
+    private String commsServiceUrl;
 
     public SignupResponseDto registerTeacher(TeacherPostDto teacherDto) {
         if (userRepository.existsByEmail(teacherDto.getEmail())) {
@@ -90,5 +95,45 @@ public class AuthService {
         userRepository.save(user);
 
         return true;
+    }
+
+    public String generateRandomPassword() {
+        String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        StringBuilder sb = new StringBuilder();
+        java.util.Random random = new java.util.Random();
+
+        // Generamos una contraseña de 10 caracteres
+        for (int i = 0; i < 10; i++) {
+            int index = random.nextInt(chars.length());
+            sb.append(chars.charAt(index));
+        }
+
+        return sb.toString();
+    }
+
+    public boolean resetPassword(String email) {
+        try {
+            UserEntity user = userRepository.findByEmail(email)
+                    .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+            String newPassword = generateRandomPassword();
+
+            user.setPassword(passwordEncoder.encode(newPassword));
+            userRepository.save(user);
+
+            SendEmailDto dto = new SendEmailDto(
+                    user.getEmail(),
+                    "Recuperación de contraseña - El Galponcito",
+                    "Se ha solicitado la recuperación de su contraseña. Su nueva contraseña es: " + newPassword +
+                            "\n\nPor favor, cambie esta contraseña después de iniciar sesión por motivos de seguridad."
+            );
+
+            String endpoint = commsServiceUrl + "/send-email";
+            restTemplate.postForEntity(endpoint, dto, String.class);
+
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 }

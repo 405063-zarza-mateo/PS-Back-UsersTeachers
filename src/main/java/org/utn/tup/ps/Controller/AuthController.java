@@ -58,4 +58,21 @@ public class AuthController {
             return new ResponseEntity<>(Map.of("message", "No se pudo actualizar la contraseña"), HttpStatus.BAD_REQUEST);
         }
     }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<?> resetPassword(@RequestParam String email) {
+        boolean success = authService.resetPassword(email);
+
+        if (success) {
+            return new ResponseEntity<>(
+                    Map.of("message", "Si el correo existe en nuestro sistema, se ha enviado una nueva contraseña"),
+                    HttpStatus.OK
+            );
+        } else {
+            return new ResponseEntity<>(
+                    Map.of("message", "Si el correo existe en nuestro sistema, se ha enviado una nueva contraseña"),
+                    HttpStatus.OK
+            );
+        }
+}
 }

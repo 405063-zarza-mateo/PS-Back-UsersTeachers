@@ -31,4 +31,7 @@ public class StudentEntity {
     @Column(nullable = true)
     private String familyInfo;
 
+    private boolean active = true;
+
+
 }
