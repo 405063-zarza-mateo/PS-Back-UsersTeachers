@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.utn.tup.ps.Dto.Student.CourseAssistanceDto;
 import org.utn.tup.ps.Dto.Student.StudentPostDto;
 import org.utn.tup.ps.Entity.StudentEntity;
 import org.utn.tup.ps.Enum.Course;
@@ -32,10 +33,9 @@ public class StudentController {
     }
 
     @GetMapping("/all")
-    public ResponseEntity<List<StudentEntity>> getStudents(){
+    public ResponseEntity<List<StudentEntity>> getStudents() {
         return new ResponseEntity<>(service.getStudents(), HttpStatus.OK);
     }
-
 
 
     @GetMapping("/{id}")
@@ -44,7 +44,7 @@ public class StudentController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<StudentEntity> updateStudent(@PathVariable Long id, @RequestBody StudentEntity entity, @RequestParam  String teacherEmail) {
+    public ResponseEntity<StudentEntity> updateStudent(@PathVariable Long id, @RequestBody StudentEntity entity, @RequestParam String teacherEmail) {
         entity.setId(id);
         return new ResponseEntity<>(service.updateStudent(entity, teacherEmail), HttpStatus.OK);
     }
@@ -56,7 +56,12 @@ public class StudentController {
     }
 
     @GetMapping("/courses")
-    public ResponseEntity<List<Course>> getCourses(){
-        return  new ResponseEntity<>(service.getCourses(), HttpStatus.OK);
+    public ResponseEntity<List<Course>> getCourses() {
+        return new ResponseEntity<>(service.getCourses(), HttpStatus.OK);
+    }
+
+    @GetMapping("/assistances")
+    public ResponseEntity<List<CourseAssistanceDto>> getStudentAssistances() {
+        return new ResponseEntity<>(service.getAssistances(), HttpStatus.OK);
     }
 }

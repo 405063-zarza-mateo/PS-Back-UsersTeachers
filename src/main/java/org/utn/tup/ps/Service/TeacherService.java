@@ -1,6 +1,7 @@
 package org.utn.tup.ps.Service;
 
 import org.utn.tup.ps.Dto.Login.ProfileDto;
+import org.utn.tup.ps.Dto.Student.CourseAssistanceDto;
 import org.utn.tup.ps.Dto.Teacher.TeacherAdminDto;
 import org.utn.tup.ps.Dto.Teacher.TeacherPostDto;
 import org.utn.tup.ps.Dto.Teacher.TeacherReviewDto;
@@ -29,4 +30,6 @@ public interface TeacherService {
     ProfileDto getProfileByEmail(String email);
 
     ProfileDto updateCourse(String email, Course course);
+
+    List<CourseAssistanceDto> getTeacherAssistances();
 }

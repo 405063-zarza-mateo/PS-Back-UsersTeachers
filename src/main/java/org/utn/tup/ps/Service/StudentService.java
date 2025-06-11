@@ -1,5 +1,6 @@
 package org.utn.tup.ps.Service;
 
+import org.utn.tup.ps.Dto.Student.CourseAssistanceDto;
 import org.utn.tup.ps.Dto.Student.StudentPostDto;
 import org.utn.tup.ps.Entity.StudentEntity;
 import org.utn.tup.ps.Enum.Course;
@@ -22,6 +23,8 @@ public interface StudentService {
     ReviewDto addReview(Long studentId, String teacherEmail, ReviewDto reviewDto);
 
     List<Course> getCourses();
+
+    List<CourseAssistanceDto> getAssistances();
 
     void passCourseAfterYear();
 }

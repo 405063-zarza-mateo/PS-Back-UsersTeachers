@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.utn.tup.ps.Dto.Student.CourseAssistanceDto;
 import org.utn.tup.ps.Dto.Student.StudentPostDto;
 import org.utn.tup.ps.Entity.ResultEntity;
 import org.utn.tup.ps.Entity.ReviewEntity;
@@ -21,7 +22,9 @@ import org.utn.tup.ps.Service.StudentService;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -92,17 +95,23 @@ public class StudentServiceImpl implements StudentService {
         StudentEntity studentEntity = studentRepository.findById(studentId).orElseThrow(() -> new RuntimeException("Student not found"));
         TeacherEntity teacher = teacherRepository.findByUser(userRepository.findByEmail(teacherEmail).get()).orElseThrow(() -> new RuntimeException("Teacher not found."));
 
+        LocalDate reviewDate = reviewDto.getDate();
+
         ReviewEntity reviewEntity = new ReviewEntity();
         reviewEntity.setResults(new ArrayList<>());
 
         List<ReviewEntity> reviews = studentEntity.getReviews();
-        if (!reviews.isEmpty() && Objects.equals(
-                reviews.get(reviews.size() - 1).getDate(), LocalDate.now())) {
-            throw new RuntimeException("El estudiante ya fue reseñado hoy");
+        for (ReviewEntity review : reviews) {
+            if (Objects.equals(review.getDate(), reviewDate)) {
+                throw new RuntimeException("El estudiante ya fue reseñado en la fecha seleccionada");
+            }
         }
-        for (ReviewEntity entity : reviewRepository.findAllByTeacher(teacher)) {
-            if (Objects.equals(entity.getDate(), LocalDate.now()) && !Objects.equals(entity.getTeacher().getUser().getEmail(), "elgalponcitoateneo@gmail.com")) {
-                throw new RuntimeException("El profesor ya ha escrito una review hoy");
+
+        if (!Objects.equals(teacher.getUser().getEmail(), "elgalponcitoateneo@gmail.com")) {
+            for (ReviewEntity entity : reviewRepository.findAllByTeacher(teacher)) {
+                if (Objects.equals(entity.getDate(), reviewDate)) {
+                    throw new RuntimeException("Ya has creado una reseña en la fecha seleccionada");
+                }
             }
         }
 
@@ -126,7 +135,7 @@ public class StudentServiceImpl implements StudentService {
 
         teacher.setAssistance(teacher.getAssistance() + 1);
 
-        reviewEntity.setDate(reviewDto.getDate());
+        reviewEntity.setDate(reviewDate);
         reviewEntity.setTeacher(teacher);
         studentEntity.getReviews().add(reviewEntity);
         studentRepository.save(studentEntity);
@@ -142,6 +151,31 @@ public class StudentServiceImpl implements StudentService {
     @Override
     public List<Course> getCourses() {
         return List.of(Course.values());
+    }
+
+    @Override
+    public List<CourseAssistanceDto> getAssistances() {
+        List<Object[]> results = studentRepository.getStudentAssistancesByCourseAndDate();
+
+        List<CourseAssistanceDto> assistances = results.stream()
+                .map(row -> {
+                    Course course = (Course) row[0];
+                    LocalDate date = (LocalDate) row[1];
+                    Long count = (Long) row[2];
+                    return new CourseAssistanceDto(count.intValue(), course.toString(), date);
+                })
+                .collect(Collectors.toList());
+        Map<LocalDate, Integer> totalsByDate = assistances.stream()
+                .collect(Collectors.groupingBy(
+                        CourseAssistanceDto::getDate,
+                        Collectors.summingInt(CourseAssistanceDto::getAssistance)
+                ));
+
+        totalsByDate.forEach((date, total) ->
+                assistances.add(new CourseAssistanceDto(total, "TOTAL", date))
+        );
+
+        return assistances;
     }
 
     @Scheduled(cron = "@yearly")

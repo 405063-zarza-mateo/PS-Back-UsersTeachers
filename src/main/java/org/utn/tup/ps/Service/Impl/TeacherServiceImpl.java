@@ -6,6 +6,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.utn.tup.ps.Dto.Login.ProfileDto;
+import org.utn.tup.ps.Dto.Student.CourseAssistanceDto;
 import org.utn.tup.ps.Dto.Student.ResultDto;
 import org.utn.tup.ps.Dto.Teacher.TeacherAdminDto;
 import org.utn.tup.ps.Dto.Teacher.TeacherPostDto;
@@ -16,6 +17,7 @@ import org.utn.tup.ps.Models.Teacher;
 import org.utn.tup.ps.Repository.*;
 import org.utn.tup.ps.Service.TeacherService;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -87,6 +89,30 @@ public class TeacherServiceImpl implements TeacherService {
                     dto.getCourse()
             );
         }).toList();
+    }
+
+    @Override
+    public List<CourseAssistanceDto> getTeacherAssistances(){
+        List<Object[]> results = teacherRepository.getTeacherAssistancesByCourseAndDate();
+
+        List<CourseAssistanceDto> assistances = results.stream()
+                .map(row -> {
+                    Course course = (Course) row[0];
+                    LocalDate date = (LocalDate) row[1];
+                    Long count = (Long) row[2];
+                    return new CourseAssistanceDto(count.intValue(), course.toString(), date);
+                })
+                .collect(Collectors.toList());
+        Map<LocalDate, Integer> totalsByDate = assistances.stream()
+                .collect(Collectors.groupingBy(
+                        CourseAssistanceDto::getDate,
+                        Collectors.summingInt(CourseAssistanceDto::getAssistance)
+                ));
+
+        totalsByDate.forEach((date, total) ->
+                assistances.add(new CourseAssistanceDto(total, "TOTAL", date))
+        );
+        return assistances;
     }
 
     @Scheduled(cron = "@yearly")

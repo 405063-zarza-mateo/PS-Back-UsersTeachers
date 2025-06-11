@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.utn.tup.ps.Dto.Login.SendEmailDto;
+import org.utn.tup.ps.Dto.Teacher.AllowResponseDto;
 import org.utn.tup.ps.Entity.TeacherEntity;
 import org.utn.tup.ps.Entity.UserEntity;
 import org.utn.tup.ps.Repository.TeacherRepository;
@@ -54,7 +55,7 @@ public class AdminServiceImpl implements AdminService {
 
         String endpoint = commsServiceUrl + "/send-email";
 
-        restTemplate.postForEntity(endpoint, dto, String.class);
+//        restTemplate.postForEntity(endpoint, dto, String.class);
 
 
         return teacherRepository.save(teacher);
@@ -83,5 +84,15 @@ public class AdminServiceImpl implements AdminService {
     @Override
     public List<UserEntity> getUsers() {
         return userRepository.findAll();
+    }
+
+    @Override
+    public void respondTeachers(List<AllowResponseDto> teacherList) {
+        for (AllowResponseDto teacher : teacherList) {
+            if (teacher.getApproved())
+                approveTeacher(teacher.getId());
+            else
+                rejectTeacher(teacher.getId());
+        }
     }
 }

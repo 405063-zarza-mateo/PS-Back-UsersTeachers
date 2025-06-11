@@ -1,5 +1,6 @@
 package org.utn.tup.ps.Service;
 
+import org.utn.tup.ps.Dto.Teacher.AllowResponseDto;
 import org.utn.tup.ps.Entity.TeacherEntity;
 import org.utn.tup.ps.Entity.UserEntity;
 
@@ -14,5 +15,7 @@ public interface AdminService {
     void rejectTeacher(Long teacherId);
 
     List<UserEntity> getUsers();
+
+    void respondTeachers(List<AllowResponseDto> teacherList);
 
 }

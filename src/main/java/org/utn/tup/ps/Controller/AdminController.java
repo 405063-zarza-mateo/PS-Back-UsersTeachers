@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.utn.tup.ps.Dto.Teacher.AllowResponseDto;
 import org.utn.tup.ps.Entity.AuditEntity;
 import org.utn.tup.ps.Entity.TeacherEntity;
 import org.utn.tup.ps.Entity.UserEntity;
@@ -42,6 +43,12 @@ public class AdminController {
     public ResponseEntity<?> rejectTeacher(@PathVariable Long id) {
         adminService.rejectTeacher(id);
         return new ResponseEntity<>("Profesor rechazado", HttpStatus.OK);
+    }
+
+    @PostMapping("/respond-request")
+    public ResponseEntity<List<AllowResponseDto>> respondRequest(@RequestBody List<AllowResponseDto> dto) {
+        adminService.respondTeachers(dto);
+        return  new ResponseEntity<List<AllowResponseDto>>(dto, HttpStatus.OK);
     }
 
     @GetMapping("/logs")

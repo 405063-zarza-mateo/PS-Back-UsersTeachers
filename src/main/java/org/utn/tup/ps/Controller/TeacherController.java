@@ -8,6 +8,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.utn.tup.ps.Dto.Login.ProfileDto;
+import org.utn.tup.ps.Dto.Student.CourseAssistanceDto;
 import org.utn.tup.ps.Dto.Teacher.TeacherAdminDto;
 import org.utn.tup.ps.Dto.Teacher.TeacherPostDto;
 import org.utn.tup.ps.Dto.Teacher.TeacherReviewDto;
@@ -80,5 +81,10 @@ public class TeacherController {
     public ResponseEntity<?> deleteTeacher(@PathVariable Long id){
         service.deleteTeacher(id);
         return new ResponseEntity<>("Deleted teacher.", HttpStatus.OK);
+    }
+
+    @GetMapping("/assistances")
+    public ResponseEntity<List<CourseAssistanceDto>> getTeacherAssistances() {
+        return new ResponseEntity<>(service.getTeacherAssistances(), HttpStatus.OK);
     }
 }

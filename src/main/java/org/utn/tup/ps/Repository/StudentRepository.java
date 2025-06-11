@@ -30,5 +30,14 @@ public interface StudentRepository extends JpaRepository<StudentEntity, Long> {
 
     List<StudentEntity> findByActiveTrue();
 
+    @Query("""
+    SELECT s.course, r.date, COUNT(s.id)
+    FROM StudentEntity s
+    JOIN s.reviews r
+    WHERE s.active = true
+    GROUP BY s.course, r.date
+    ORDER BY r.date, s.course
+    """)
+    List<Object[]> getStudentAssistancesByCourseAndDate();
 }
 
