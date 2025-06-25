@@ -1,6 +1,4 @@
-
 services:
-
 
   user-service:
     build: ../PS-Back-UsersTeachers
@@ -10,8 +8,9 @@ services:
     networks:
       - user-network
     depends_on:
-      - mysql-db
-
+      mysql-db:
+        condition: service_healthy
+    restart: on-failure
 
   mysql-db:
     image: mysql:8.0
@@ -21,7 +20,6 @@ services:
       MYSQL_USER: user_app
       MYSQL_PASSWORD: user_pass
       MYSQL_ROOT_PASSWORD: root_pass
-
     ports:
       - "3307:3306"
     expose:
@@ -29,13 +27,13 @@ services:
     volumes:
       - mysql-data:/var/lib/mysql
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p$$MYSQL_ROOT_PASSWORD"]
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-proot_pass"]
       interval: 10s
       timeout: 5s
-      retries: 5
+      retries: 10
+      start_period: 30s
     networks:
       - user-network
-
 
 volumes:
   mysql-data:
